@@ -1,50 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: edgeflask
+  name: microshift-bootstrap-demo-deployment
 spec:
   selector:
     matchLabels:
-      run: load-balancer-edgeflask
+      run: microshift-bootstrap-demo
   replicas: 1
   template:
     metadata:
       labels:
-        run: load-balancer-edgeflask
+        run: microshift-bootstrap-demo
     spec:
       containers:
-        - name: edgeflask
-          image: quay.io/egallen/edgeflask:0.1
+        - name: microshift-bootstrap-demo
+          image: shonpaz123/microshift-bootstrap-demo
           ports:
-            - containerPort: 5000
+            - containerPort: 80
               protocol: TCP
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: edgeflusk-service
+  name: microshift-bootstrap-demo-service
   labels:
-    run: load-balancer-edgeflask
+    run: microshift-bootstrap-demo
 spec:
   type: ClusterIP
   ports:
-    - port: 80
-      targetPort: 5000
+    - port: 8080
+      targetPort: 80
       protocol: TCP
   selector:
-    run: load-balancer-edgeflask
+    run: microshift-bootstrap-demo
 ---
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   labels:
-    run: load-balancer-edgeflask
-  name: edgeflusk-service
-  namespace: app
+    run: microshift-bootstrap-demo
+  name: microshift-bootstrap-demo-route
 spec:
   port:
-    targetPort: 5000
+    targetPort: 8080
   to:
     kind: Service
-    name: edgeflusk-service
+    name: microshift-bootstrap-demo-service
     weight: 100
